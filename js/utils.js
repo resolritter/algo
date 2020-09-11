@@ -21,7 +21,7 @@ function permutator(inputArr) {
   return result
 }
 
-function flattenDeep(arr, results) {
+function flattenDeep(arr, results = []) {
   for (const child of arr) {
     if (Array.isArray(child)) {
       flattenDeep(child, results)
