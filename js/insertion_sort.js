@@ -1,5 +1,4 @@
-const { lines } = require("./utils")
-const { strict } = require("assert")
+const { lines, assertArrayIsSorted } = require("./utils")
 
 const before = lines.reduce((acc, e) => {
   acc.push(parseInt(e))
@@ -23,12 +22,6 @@ function insertionSort(arr) {
 }
 
 const sorted = insertionSort(before)
-
-// "property-based testing": ensure the list is properly sorted
-let highestNumber = sorted[0]
-for (let i = 1; i < sorted.length; i++) {
-  strict(sorted[i] > highestNumber)
-  highestNumber = sorted[i]
-}
+assertArrayIsSorted(sorted)
 
 console.log("After", sorted)

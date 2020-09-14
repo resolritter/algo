@@ -6,7 +6,7 @@ function enqueue(stack, i) {
 }
 
 const stack = lines.reduce((stack, e) => {
-  enqueue(stack, parseInt(e))
+ enqueue(stack, parseInt(e))
   return stack
 }, [])
 

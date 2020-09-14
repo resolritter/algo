@@ -1,5 +1,14 @@
 const fs = require("fs")
 const filePath = process.argv[2] ?? "/dev/stdin"
+const assert = require("assert")
+
+function assertArrayIsSorted(array) {
+  let highestNumber = array[0]
+  for (let i = 1; i < array.length; i++) {
+    assert.strict(array[i] > highestNumber)
+    highestNumber = array[i]
+  }
+}
 
 function permutator(inputArr) {
   const result = []
@@ -44,4 +53,5 @@ function readLines() {
 module.exports = {
   lines: readLines(),
   flattenDeep,
+  assertArrayIsSorted,
 }
