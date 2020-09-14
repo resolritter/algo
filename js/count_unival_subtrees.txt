@@ -1,0 +1,10 @@
+## INPUT 1
+a
+a a
+_ _ a a
+_ _ _ _ _ _ _ A
+## INPUT 2
+a
+c b
+_ _ b b
+_ _ _ _ _ _ _ b
