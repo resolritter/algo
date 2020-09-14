@@ -1,21 +1,21 @@
-const assert = require("assert")
-const { lines } = require("./utils")
-const firstDate = lines[0]
-const weekFrequency = parseInt(lines[1])
-const eventWeekDays = lines.slice(2, -1)
-const nthNextDates = lines.slice(-1)[0]
-
 // Input:
-//   firstDate: "01/01/2015"
-//   everyNthWeek: 2
-//   eventWeekDays: ["Monday", Thursday"]
-//   nthNextDates: 4
+//   First line => firstDate: "01/01/2015"
+//   Second line => everyNthWeek: 2
+//   (N - 1) next lines => eventWeekDays: ["Monday", Thursday"]
+//   Last line => nthNextDates: 4
 // Expected Output:
 //  [ '01/01/2015', '04/01/2015', '15/01/2015', '18/01/2015' ]
 //  i.e. starting from the current week (from firstDate)
 //       the 4 (nthNextDates) nearest dates
 //       for the selected week days (eventWeekDays)
 //       with 2 (everyNthWeek) weeks in-between them
+
+const assert = require("assert")
+const { lines } = require("./utils")
+const firstDate = lines[0]
+const weekFrequency = parseInt(lines[1])
+const eventWeekDays = lines.slice(2, -1)
+const nthNextDates = lines.slice(-1)[0]
 
 function isLeapYear(year) {
   return (year % 4 === 0 && year % 100 != 0) || year % 400 === 0
@@ -109,4 +109,3 @@ assert.deepStrictEqual(
   recurringTask(firstDate, weekFrequency, eventWeekDays, nthNextDates),
   ["01/01/2015", "04/01/2015", "15/01/2015", "18/01/2015"],
 )
-console.log("ok")

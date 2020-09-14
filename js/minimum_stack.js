@@ -62,5 +62,3 @@ pop(stack)
 strict(getHighest(stack) == 4)
 pop(stack)
 strict(getHighest(stack) == 3)
-
-console.log("ok")
