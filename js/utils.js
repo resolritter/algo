@@ -50,8 +50,27 @@ function readLines() {
     .slice(0, -1)
 }
 
+const inputMarker = "## INPUT"
+function groupInputLines(lines) {
+  const groups = [[]]
+  let groupI = -1
+
+  for (const line of lines) {
+    if (line.slice(0, inputMarker.length) === inputMarker) {
+      groupI++
+      groups.push([])
+      continue
+    }
+
+    groups[groupI].push(line)
+  }
+
+  return groups
+}
+
 module.exports = {
   lines: readLines(),
+  groupInputLines,
   flattenDeep,
   assertArrayIsSorted,
 }
