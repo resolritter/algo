@@ -52,7 +52,7 @@ function readLines() {
 
 const inputMarker = "## INPUT"
 function groupInputLines(lines) {
-  const groups = [[]]
+  const groups = []
   let groupI = -1
 
   for (const line of lines) {
@@ -73,4 +73,5 @@ module.exports = {
   groupInputLines,
   flattenDeep,
   assertArrayIsSorted,
+  permutator,
 }
