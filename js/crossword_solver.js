@@ -6,21 +6,31 @@ const crosswordLines = lines.slice(0, 10).reduce((acc, x, i) => {
   acc.push(x.split(""))
   return acc
 }, [])
-
 const words = lines.slice(10).map((x) => x.split(";"))[0]
-
 const wordSlots = {}
 
-function traverseTrail(i, j, trail, progressTrail) {
-  if (crosswordLines[i] && crosswordLines[i][j] === "-") {
-    const [ii, jj] = progressTrail(i, j)
-    return traverseTrail(ii, jj, [...trail, [i, j]], progressTrail)
+function arraysEqual(a, b) {
+  if (a === b) return true
+  if (a == null || b == null) return false
+  if (a.length !== b.length) return false
+
+  for (let i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false
   }
-  return trail
+
+  return true
 }
 
 function hashTrail(trail) {
   return trail.reduce((acc, e) => `${acc}[${e.toString()}]`, [])
+}
+
+function incrementHorizontally(i, j) {
+  return [i, j + 1]
+}
+
+function incrementVertically(i, j) {
+  return [i + 1, j]
 }
 
 function registerTrail(trail) {
@@ -37,33 +47,12 @@ function registerTrail(trail) {
   wordSlots[hash] = { trail }
 }
 
-function incrementHorizontally(i, j) {
-  return [i, j + 1]
-}
-
-function incrementVertically(i, j) {
-  return [i + 1, j]
-}
-
-function computeWordSlots() {
-  for (let i = 0; i < crosswordLines.length; i++) {
-    for (let j = 0; j < crosswordLines[0].length; j++) {
-      registerTrail(traverseTrail(i, j, [], incrementHorizontally))
-      registerTrail(traverseTrail(i, j, [], incrementVertically))
-    }
+function traverseTrail(i, j, trail, progressTrail) {
+  if (crosswordLines[i] && crosswordLines[i][j] === "-") {
+    const [ii, jj] = progressTrail(i, j)
+    return traverseTrail(ii, jj, [...trail, [i, j]], progressTrail)
   }
-}
-
-function arraysEqual(a, b) {
-  if (a === b) return true
-  if (a == null || b == null) return false
-  if (a.length !== b.length) return false
-
-  for (let i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false
-  }
-
-  return true
+  return trail
 }
 
 function checkIntersection(slots, hash, candidateWord) {
@@ -112,9 +101,17 @@ function fitIntoSlots(slots, remainingWords) {
   })
 }
 
-computeWordSlots()
-const possibleSlots = fitIntoSlots(wordSlots, words)
-const results = flattenDeep(possibleSlots, [])
+// populate 'wordSlots' with the available positions in the grid
+for (let i = 0; i < crosswordLines.length; i++) {
+  for (let j = 0; j < crosswordLines[0].length; j++) {
+    registerTrail(traverseTrail(i, j, [], incrementHorizontally))
+    registerTrail(traverseTrail(i, j, [], incrementVertically))
+  }
+}
+
+// fit all the words into the available positions in 'wordSlots'
+const results = flattenDeep(fitIntoSlots(wordSlots, words))
+
 if (results.length) {
   for (const r of results) {
     console.log(r)
