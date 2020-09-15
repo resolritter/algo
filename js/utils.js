@@ -3,10 +3,10 @@ const filePath = process.argv[2] ?? "/dev/stdin"
 const assert = require("assert")
 
 function assertArrayIsSorted(array) {
-  let highestNumber = array[0]
+  let previousNumber = array[0]
   for (let i = 1; i < array.length; i++) {
-    assert.strict(array[i] > highestNumber)
-    highestNumber = array[i]
+    assert.strict(array[i] > previousNumber)
+    previousNumber = array[i]
   }
 }
 

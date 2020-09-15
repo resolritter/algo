@@ -31,13 +31,14 @@ c   b
 This tree has 5 unival subtrees: the leaf at ‘c’, and every ‘b’.
 */
 
-const { lines, flattenDeep, groupInputLines } = require("./utils")
+const { lines, groupInputLines } = require("./utils")
 const [firstGroup, secondGroup] = groupInputLines(lines)
 const assert = require("assert")
 
 const emptyNodeValue = "_"
 const univalMarker = Symbol("IS UNIVAL")
 
+// the tree is encoded as an array of arrays
 function buildTreeLevel(nodes) {
   const level = []
   for (let i = 0; i < nodes.length; i += 2) {
@@ -55,15 +56,15 @@ function buildTreeLevel(nodes) {
   return level
 }
 
-function traverse(root, depth, i) {
-  const currentNode = root[depth][i]
+function traverse(tree, depth, i) {
+  const currentNode = tree[depth][i]
   const nodesBelowLeft =
-    root[depth + 1] && root[depth + 1][i * 2]
-      ? flattenDeep(traverse(root, depth + 1, i * 2))
+    tree[depth + 1] && tree[depth + 1][i * 2]
+      ? traverse(tree, depth + 1, i * 2)
       : []
   const nodesBelowRight =
-    root[depth + 1] && root[depth + 1][i * 2 + 1]
-      ? flattenDeep(traverse(root, depth + 1, i * 2 + 1))
+    tree[depth + 1] && tree[depth + 1][i * 2 + 1]
+      ? traverse(tree, depth + 1, i * 2 + 1)
       : []
   let isUnival = true
 
@@ -88,16 +89,13 @@ function traverse(root, depth, i) {
   return result
 }
 
-for (const [lines, { expectedCount }] of [
-  [firstGroup, { expectedCount: 3 }],
-  [secondGroup, { expectedCount: 5 }],
-]) {
-  // the tree is encoded as an array of arrays
-  const root = lines.reduce((acc, l) => {
+for (const [expectedCountRaw, ...lines] of [firstGroup, secondGroup]) {
+  const expectedCount = parseInt(expectedCountRaw)
+  const tree = lines.reduce((acc, l) => {
     acc.push(buildTreeLevel(l.split(" ")))
     return acc
   }, [])
-  const univalCount = traverse(root, 0, 0).reduce(
+  const univalCount = traverse(tree, 0, 0).reduce(
     (acc, c) => (c === univalMarker ? acc + 1 : acc),
     0,
   )
