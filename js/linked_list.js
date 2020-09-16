@@ -1,12 +1,21 @@
 const { lines } = require("./utils")
 
-const head = {
-  value: "HEAD",
-  next: undefined,
+function skip(head, n) {
+  let current = head
+
+  for (let i = 0; i < n; i++) {
+    if (head.next) {
+      head = head.next
+    } else {
+      break
+    }
+  }
+
+  return head
 }
 
-function append(current, value, next) {
-  let cell = current
+function append(head, value, next) {
+  let cell = head
   while (cell.next) {
     cell = cell.next
   }
@@ -14,7 +23,7 @@ function append(current, value, next) {
     value,
     next,
   }
-  return current
+  return head
 }
 
 function forEach(head, cb) {
@@ -79,21 +88,131 @@ function filter(head, value) {
   if (head.value === value) {
     head = {
       value: null,
-      next: null
+      next: null,
     }
   }
 
   return head
 }
 
-lines.forEach(appendCurried(head))
+function isPalindrome(head) {
+  if (!head.next) {
+    return true
+  }
+  let reversed = reverse(head)
+  while (head) {
+    if (head.value !== reversed.value) {
+      return false
+    }
+    reversed = reversed.next
+    head = head.next
+  }
+  return true
+}
 
-console.log("--- original")
-forEach(head, console.log)
+function merge(fstHead, sndHead) {
+  let fstCurrent = fstHead
+  let sndCurrent = sndHead
+  let head = {
+    value: null,
+    next: null,
+  }
 
-const reversed = reverse(head)
-console.log("\n--- reversed")
-forEach(reversed, console.log)
+  while (true) {
+    while (fstCurrent) {
+      if (!sndCurrent || fstCurrent.value < sndCurrent.value) {
+        append(head, fstCurrent.value)
+        fstCurrent = fstCurrent.next
+      } else {
+        break
+      }
+    }
+    while (sndCurrent) {
+      if (!fstCurrent || sndCurrent.value < fstCurrent.value) {
+        append(head, sndCurrent.value)
+        sndCurrent = sndCurrent.next
+      } else {
+        break
+      }
+    }
 
-console.log("\n--- value '5' filtered out")
-forEach(filter(reversed, "5"), console.log)
+    if (fstCurrent || sndCurrent) {
+      if (sndCurrent?.value === fstCurrent?.value) {
+        append(head, fstCurrent.value)
+        append(head, sndCurrent.value)
+        sndCurrent = sndCurrent.next
+        fstCurrent = fstCurrent.next
+      }
+    } else {
+      break
+    }
+  }
+
+  head = head.next
+  return head
+}
+
+function printReverse() {
+  const head = { value: lines[0], next: undefined }
+  lines.slice(1).forEach(appendCurried(head))
+
+  console.log("--- original")
+  forEach(head, console.log)
+
+  const reversed = reverse(head)
+  console.log("\n--- reversed")
+  forEach(reversed, console.log)
+}
+
+function printFilter() {
+  const head = { value: lines[0], next: undefined }
+  lines.slice(1).forEach(appendCurried(head))
+
+  console.log("--- original")
+  forEach(head, console.log)
+
+  console.log("\n--- value '5' filtered out")
+  forEach(filter(head, "5"), console.log)
+}
+
+function printPalindrome() {
+  const head = {
+    value: "2",
+    next: undefined,
+  }
+
+  for (const n of ["2", "3", "2", "2"]) {
+    append(head, n)
+  }
+
+  console.log("--- palindrome check")
+  forEach(head, console.log)
+  console.log(`--- is it a palindrome? ${isPalindrome(head)}`)
+}
+
+function printMerge() {
+  const first = { value: lines[0], next: undefined }
+  lines.slice(1).forEach(appendCurried(first))
+
+  console.log("--- first list")
+  forEach(first, console.log)
+
+  let second = { value: lines[0], next: undefined }
+  console.log("\n--- second list")
+  lines.slice(1).forEach(appendCurried(second))
+  forEach(second, console.log)
+
+  const skipCount = 2
+  console.log(`\n--- second list skipping first ${skipCount} entries`)
+  second = skip(second, skipCount)
+  forEach(second, console.log)
+
+  console.log("\n--- merged result (sorting order preserved)")
+  forEach(merge(first, second), console.log)
+}
+
+for (const test of [printReverse, printFilter, printPalindrome, printMerge]) {
+  console.log(`# start ${test.name}`)
+  test()
+  console.log(`# end ${test.name}\n`)
+}
