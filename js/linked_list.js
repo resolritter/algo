@@ -49,7 +49,7 @@ function appendCurried(head) {
 function reverse(head) {
   function iter(current, previousValue, isFirst = true) {
     if (current.next) {
-      const [cell, lastValue] = iter(current.next, current.value, false)
+      const [cell, lastValue] = iter(current.next, current.value)
       if (isFirst) {
         cell.value = lastValue
       }
@@ -120,20 +120,20 @@ function merge(fstHead, sndHead) {
 
   while (true) {
     while (fstCurrent) {
-      if (!sndCurrent || fstCurrent.value < sndCurrent.value) {
-        append(head, fstCurrent.value)
-        fstCurrent = fstCurrent.next
-      } else {
+      if (sndCurrent && fstCurrent.value > sndCurrent.value) {
         break
       }
+
+      append(head, fstCurrent.value)
+      fstCurrent = fstCurrent.next
     }
     while (sndCurrent) {
-      if (!fstCurrent || sndCurrent.value < fstCurrent.value) {
-        append(head, sndCurrent.value)
-        sndCurrent = sndCurrent.next
-      } else {
+      if (fstCurrent && sndCurrent.value > fstCurrent.value) {
         break
       }
+
+      append(head, sndCurrent.value)
+      sndCurrent = sndCurrent.next
     }
 
     if (fstCurrent || sndCurrent) {

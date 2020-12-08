@@ -6,7 +6,7 @@ function enqueue(stack, i) {
 }
 
 const stack = lines.reduce((stack, e) => {
- enqueue(stack, parseInt(e))
+  enqueue(stack, parseInt(e))
   return stack
 }, [])
 
@@ -15,13 +15,12 @@ function dequeue(stack) {
     if (stack.length === 1) {
       return [stack.pop(), nextStack]
     } else {
-      const currentStack = i == 0 ? stack.slice() : stack
-      nextStack.push(currentStack.pop())
-      return iter(currentStack, nextStack, i + 1)
+      nextStack.push(stack.pop())
+      return iter(stack, nextStack, i + 1)
     }
   }
 
-  const [dequeued, newStack] = iter(stack)
+  const [dequeued, newStack] = iter(stack.slice())
 
   return {
     dequeued,
@@ -30,9 +29,9 @@ function dequeue(stack) {
 }
 
 const oldStack = stack.slice()
+console.log("Before\n", oldStack.toString())
 const firstIn = oldStack[0]
 const afterDequeue = oldStack.slice(1)
-console.log("Before\n", oldStack.toString())
 
 const { dequeued, stack: newStack } = dequeue(stack)
 assert.strictEqual(dequeued, firstIn)
