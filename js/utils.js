@@ -68,10 +68,16 @@ function groupInputLines(lines) {
   return groups
 }
 
+const logWrapped = function(message, object) {
+  console.log(`\nPrinting ${message}`)
+  console.log(object)
+  console.log(`End ${message}\n`)
+}
+
 module.exports = {
-  lines: readLines(),
   groupInputLines,
   flattenDeep,
   assertArrayIsSorted,
   permutator,
+  logWrapped,
 }
