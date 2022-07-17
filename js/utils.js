@@ -1,12 +1,10 @@
 const fs = require("fs")
-const filePath = process.argv[2] ?? "/dev/stdin"
+const inputPath = process.argv[2] ?? "/dev/stdin"
 const assert = require("assert")
 
 function assertArrayIsSorted(array) {
-  let previousNumber = array[0]
   for (let i = 1; i < array.length; i++) {
-    assert.strict(array[i] > previousNumber)
-    previousNumber = array[i]
+    assert.strict(array[i - 1] > array[i])
   }
 }
 
@@ -43,11 +41,7 @@ function flattenDeep(arr, results = []) {
 }
 
 function readLines() {
-  return fs
-    .readFileSync(filePath)
-    .toString()
-    .split("\n")
-    .slice(0, -1)
+  return fs.readFileSync(inputPath).toString().split("\n").slice(0, -1)
 }
 
 const inputMarker = "## INPUT"
@@ -68,7 +62,7 @@ function groupInputLines(lines) {
   return groups
 }
 
-const logWrapped = function(message, object) {
+const logWrapped = function (message, object) {
   console.log(`\nPrinting ${message}`)
   console.log(object)
   console.log(`End ${message}\n`)
@@ -80,4 +74,5 @@ module.exports = {
   assertArrayIsSorted,
   permutator,
   logWrapped,
+  readLines,
 }

@@ -1,8 +1,12 @@
-const { lines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 const assert = require("assert")
 
 const cents = parseInt(lines)
 const coinsValues = [100, 25, 5, 1]
+const coinsValuesSum = coinsValues.reduce(function (acc, v) {
+  return acc + v
+}, 0)
 
 function divide(cents) {
   function iter(cents, coinSet = []) {
@@ -17,5 +21,5 @@ function divide(cents) {
   return iter(cents)
 }
 
-const coinSet = divide(131)
+const coinSet = divide(coinsValuesSum)
 assert.deepStrictEqual(coinSet, coinsValues)

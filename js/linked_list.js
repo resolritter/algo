@@ -1,4 +1,5 @@
-const { lines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 
 function skip(head, n) {
   let current = head

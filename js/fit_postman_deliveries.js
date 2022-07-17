@@ -33,7 +33,8 @@ it in time, since the earliest time the delivery can be completed is 14:30 + 15
 minutes = 14:45.
 */
 
-const { lines, groupInputLines, permutator } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 const assert = require("assert")
 
 const lineGroups = groupInputLines(lines)

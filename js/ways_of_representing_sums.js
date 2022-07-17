@@ -1,4 +1,5 @@
-const { lines: rawLines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 const assert = require("assert")
 const lines = rawLines.map(e => parseInt(e))
 

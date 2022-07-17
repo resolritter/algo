@@ -1,4 +1,5 @@
-const { lines, assertArrayIsSorted } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 
 const items = lines.reduce((acc, e) => {
   acc.push(parseInt(e))

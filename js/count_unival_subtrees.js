@@ -31,7 +31,8 @@ c   b
 This tree has 5 unival subtrees: the leaf at ‘c’, and every ‘b’.
 */
 
-const { lines, groupInputLines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 const [firstGroup, secondGroup] = groupInputLines(lines)
 const assert = require("assert")
 

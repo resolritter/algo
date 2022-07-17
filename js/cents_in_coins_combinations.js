@@ -1,4 +1,5 @@
-const { lines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 
 const cents = parseInt(lines[0])
 const coinsValues = [100, 25, 5, 1]

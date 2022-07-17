@@ -1,4 +1,5 @@
-const { lines, flattenDeep } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 
 const edgesCount = parseInt(lines[0])
 const edges = lines

@@ -1,4 +1,5 @@
-const { lines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 const { strict } = require("assert")
 
 let highest = -1

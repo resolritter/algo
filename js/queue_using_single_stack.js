@@ -1,4 +1,5 @@
-const { lines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 const assert = require("assert")
 
 function enqueue(stack, i) {

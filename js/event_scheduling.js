@@ -11,7 +11,8 @@
 //       with 2 (everyNthWeek) weeks in-between them
 
 const assert = require("assert")
-const { lines } = require("./utils")
+const { readLines } = require("./utils")
+const lines = readLines()
 const firstDate = lines[0]
 const weekFrequency = parseInt(lines[1])
 const eventWeekDays = lines.slice(2, -1)
