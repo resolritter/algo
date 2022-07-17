@@ -33,16 +33,13 @@ This tree has 5 unival subtrees: the leaf at ‘c’, and every ‘b’.
 Given the root to a binary tree, count the number of unival subtrees.
 */
 
-const { expect } = require("./utils")
-const assert = require("assert")
-
-const inputs = readInput(__filename)
+const { run } = require("./utils")
 
 const emptyNodeValue = "_"
 const univalMarker = Symbol("IS UNIVAL")
 
 // the tree is encoded as an array of arrays
-function buildTreeLevel(nodes) {
+const buildTreeLevel = (nodes) => {
   const level = []
   for (let i = 0; i < nodes.length; i += 2) {
     if (nodes[i] === emptyNodeValue) {
@@ -59,7 +56,7 @@ function buildTreeLevel(nodes) {
   return level
 }
 
-function traverse(tree, depth, i) {
+const traverse = (tree, depth, i) => {
   const currentNode = tree[depth][i]
   const nodesBelowLeft =
     tree[depth + 1] && tree[depth + 1][i * 2]
@@ -92,16 +89,15 @@ function traverse(tree, depth, i) {
   return result
 }
 
-for (const input of inputs) {
+const solve = (input) => {
   const tree = input.reduce((acc, l) => {
     acc.push(buildTreeLevel(l.split(" ")))
     return acc
   }, [])
-
-  const univalCount = traverse(tree, 0, 0).reduce(
+  return traverse(tree, 0, 0).reduce(
     (acc, c) => (c === univalMarker ? acc + 1 : acc),
     0,
   )
-
-  assert.strictEqual(univalCount, expectedCount)
 }
+
+run(__filename, solve)
