@@ -1,1 +1,1 @@
-solutions for coding exercises and/or competitive programming
+This repository hosts solutions for coding challenges
