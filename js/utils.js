@@ -152,11 +152,11 @@ const run = (
 }
 
 const copyMatrix2D = (matrix) => {
-  const out = []
+  const cpy = []
   for (const row of matrix) {
-    out.push([...row])
+    cpy.push([...row])
   }
-  return out
+  return cpy
 }
 
 module.exports = {
