@@ -6,6 +6,8 @@
   when a gap is longer, the item comprises the start and the end of the gap, joined with a minus sign.
 */
 
+const { run } = require("./utils")
+
 const solve = (vs) => {
   const h = new Map(vs.map((v) => [v, true]))
 
@@ -38,4 +40,4 @@ const solve = (vs) => {
   return buf.slice(1)
 }
 
-console.log(solve([0, 1, 2, 50, 52, 75], "3-49,51,53-74,76-99"))
+run(__filename, solve)

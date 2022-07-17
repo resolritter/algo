@@ -29,12 +29,14 @@ c   b
          b
 
 This tree has 5 unival subtrees: the leaf at ‘c’, and every ‘b’.
+
+Given the root to a binary tree, count the number of unival subtrees.
 */
 
-const { readLines } = require("./utils")
-const lines = readLines()
-const [firstGroup, secondGroup] = groupInputLines(lines)
+const { expect } = require("./utils")
 const assert = require("assert")
+
+const inputs = readInput(__filename)
 
 const emptyNodeValue = "_"
 const univalMarker = Symbol("IS UNIVAL")
@@ -90,12 +92,12 @@ function traverse(tree, depth, i) {
   return result
 }
 
-for (const [expectedCountRaw, ...lines] of [firstGroup, secondGroup]) {
-  const expectedCount = parseInt(expectedCountRaw)
-  const tree = lines.reduce((acc, l) => {
+for (const input of inputs) {
+  const tree = input.reduce((acc, l) => {
     acc.push(buildTreeLevel(l.split(" ")))
     return acc
   }, [])
+
   const univalCount = traverse(tree, 0, 0).reduce(
     (acc, c) => (c === univalMarker ? acc + 1 : acc),
     0,

@@ -1,6 +1,6 @@
 // hr/challenges/crosswords-101
-const { readLines } = require("./utils")
-const lines = readLines()
+const { readInput } = require("./utils")
+const lines = readInput()
 const { strict } = require("assert")
 
 const crosswordLines = lines.slice(0, 10).reduce((acc, x, i) => {

@@ -1,4 +1,4 @@
-const { readLines } = require("./utils")
-const lines = readLines()
+const { readInput } = require("./utils")
+const lines = readInput()
 
-console.log(readLines())
+console.log(readInput())

@@ -1,5 +1,5 @@
-const { readLines } = require("./utils")
-const lines = readLines()
+const { readInput } = require("./utils")
+const lines = readInput()
 
 const items = lines.reduce((acc, e) => {
   acc.push(parseInt(e))

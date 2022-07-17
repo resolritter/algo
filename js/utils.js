@@ -1,14 +1,27 @@
 const fs = require("fs")
-const inputPath = process.argv[2] ?? "/dev/stdin"
+const path = require("path")
 const assert = require("assert")
 
-function assertArrayIsSorted(array) {
+const inputsDir = path.join(path.dirname(__dirname), "inputs")
+const answersDir = path.join(path.dirname(__dirname), "answers")
+
+const print = (item, msg) => {
+  if (msg) {
+    console.log(`\nPrinting ${msg}`)
+  }
+  console.log(item)
+  if (msg) {
+    console.log(`\nEnd ${msg}`)
+  }
+}
+
+const assertArrayIsSorted = (array) => {
   for (let i = 1; i < array.length; i++) {
     assert.strict(array[i - 1] > array[i])
   }
 }
 
-function permutator(inputArr) {
+const permutator = (inputArr) => {
   const result = []
 
   function permute(arr, m = []) {
@@ -28,7 +41,7 @@ function permutator(inputArr) {
   return result
 }
 
-function flattenDeep(arr, results = []) {
+const flattenDeep = (arr, results = []) => {
   for (const child of arr) {
     if (Array.isArray(child)) {
       flattenDeep(child, results)
@@ -40,39 +53,94 @@ function flattenDeep(arr, results = []) {
   return results
 }
 
-function readLines() {
-  return fs.readFileSync(inputPath).toString().split("\n").slice(0, -1)
-}
+const readInput = (modulePath) => {
+  const inputPath = process.argv[2] ?? "/dev/stdin"
 
-const inputMarker = "## INPUT"
-function groupInputLines(lines) {
+  let txt = ""
+  try {
+    txt = fs.readFileSync(inputPath).toString()
+  } catch {
+    const parsedModulePath = path.parse(modulePath)
+    txt = fs
+      .readFileSync(path.join(inputsDir, parsedModulePath.name))
+      .toString()
+  }
+  if (!txt) {
+    throw new Error("Input text is empty")
+  }
+
   const groups = []
-  let groupI = -1
-
-  for (const line of lines) {
-    if (line.slice(0, inputMarker.length) === inputMarker) {
-      groupI++
-      groups.push([])
-      continue
+  let group = []
+  for (const line of txt.trimEnd().split("\n")) {
+    const asInt = parseInt(line)
+    if (Number.isNaN(asInt)) {
+      if (line === "#end") {
+        groups.push(group)
+        group = []
+      } else {
+        group.push(line)
+      }
+    } else {
+      const asFloat = parseFloat(line)
+      if (asFloat === asInt) {
+        group.push(asInt)
+      } else {
+        group.push(asFloat)
+      }
     }
-
-    groups[groupI].push(line)
+  }
+  if (group.length) {
+    groups.push(group)
   }
 
   return groups
 }
 
-const logWrapped = function (message, object) {
-  console.log(`\nPrinting ${message}`)
-  console.log(object)
-  console.log(`End ${message}\n`)
+const readAnswer = (modulePath) => {
+  const parsedModulePath = path.parse(modulePath)
+  let txt = fs
+    .readFileSync(path.join(answersDir, parsedModulePath.name))
+    .toString()
+  if (txt.endsWith("\n")) {
+    txt = txt.slice(0, -1)
+  }
+  return txt.split("\n")
+}
+
+const run = (modulePath, solver, inputs, answers) => {
+  inputs ??= readInput(modulePath)
+  answers ??= readAnswer(modulePath)
+
+  for (let i = 0; i < inputs.length; i++) {
+    const input = inputs[i]
+
+    let prefix = "[OK]"
+    let msg = ""
+    try {
+      const ans = String(solver(inputs[i]))
+      const expectation = answers[i]
+      if (answers[i] === undefined) {
+        prefix = "[ERR]"
+        msg = `\n    Missing answer!`
+      } else if (ans !== expectation) {
+        prefix = "[ERR]"
+        msg = `\n    ${ans} != ${expectation}`
+      }
+    } catch (error) {
+      prefix = "[ERR]"
+      msg = `\n${error.toString()}`
+    }
+
+    print(`${prefix} ${input} ${msg}`)
+  }
 }
 
 module.exports = {
-  groupInputLines,
   flattenDeep,
   assertArrayIsSorted,
   permutator,
-  logWrapped,
-  readLines,
+  print,
+  readInput,
+  readAnswer,
+  run,
 }

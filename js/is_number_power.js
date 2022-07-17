@@ -1,5 +1,5 @@
-const { readLines } = require("./utils")
-const lines = readLines()
+const { readInput } = require("./utils")
+const lines = readInput()
 const assert = require("assert")
 
 // Determine if the given number is a power of some non-negative integer.

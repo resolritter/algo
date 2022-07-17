@@ -1,4 +1,4 @@
-const { logWrapped } = require("./utils")
+const { print } = require("./utils")
 
 const input = `
 5
@@ -8,12 +8,12 @@ const input = `
 2 5
 `
 
-const buildGraph = function(input) {
+const buildGraph = function (input) {
   return input
-    .map(function(line) {
+    .map(function (line) {
       return line.split(" ")
     })
-    .reduce(function(acc, [i, j]) {
+    .reduce(function (acc, [i, j]) {
       if (!acc[i]) {
         acc[i] = []
       }
@@ -22,7 +22,7 @@ const buildGraph = function(input) {
     }, {})
 }
 
-const tracePaths = function(edges, i, j, backTrack, acc) {
+const tracePaths = function (edges, i, j, backTrack, acc) {
   if (!edges[i]) {
     acc.push(backTrack)
     return
@@ -38,7 +38,7 @@ const tracePaths = function(edges, i, j, backTrack, acc) {
   }
 }
 
-const getShortestPath = function(graph, j) {
+const getShortestPath = function (graph, j) {
   const ran = {}
   let shortestPath
 
@@ -66,7 +66,7 @@ const getShortestPath = function(graph, j) {
 const [target, ...lines] = input.trim().split("\n")
 
 const graph = buildGraph(lines)
-logWrapped("Graph", graph)
+print(graph, "Graph")
 
 const shortest = getShortestPath(graph, target)
 if (shortest) {
