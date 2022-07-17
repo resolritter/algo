@@ -69,9 +69,7 @@ const readGroups = (txt) => {
     if (line === "#end") {
       groups.push(group)
       group = []
-      continue
-    }
-    if (numberMatcher.test(line)) {
+    } else if (numberMatcher.test(line)) {
       group.push(line.includes(".") ? parseFloat(line) : parseInt(line))
     } else {
       group.push(line)
