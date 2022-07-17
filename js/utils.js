@@ -53,6 +53,37 @@ const flattenDeep = (arr, results = []) => {
   return results
 }
 
+const trimTrailingNewline = (input) => {
+  while (input.slice(-1) === "\n") {
+    input = input.slice(0, -1)
+  }
+  return input
+}
+
+const numberMatcher = /^[0-9]+$/
+const readGroups = (txt) => {
+  const groups = []
+
+  let group = []
+  for (const line of trimTrailingNewline(txt).split("\n")) {
+    if (line === "#end") {
+      groups.push(group)
+      group = []
+      continue
+    }
+    if (numberMatcher.test(line)) {
+      group.push(line.includes(".") ? parseFloat(line) : parseInt(line))
+    } else {
+      group.push(line)
+    }
+  }
+  if (group.length) {
+    groups.push(group)
+  }
+
+  return groups
+}
+
 const readInput = (modulePath) => {
   const inputPath = process.argv[2] ?? "/dev/stdin"
 
@@ -69,47 +100,30 @@ const readInput = (modulePath) => {
     throw new Error("Input text is empty")
   }
 
-  const groups = []
-  let group = []
-  for (const line of txt.trimEnd().split("\n")) {
-    const asInt = parseInt(line)
-    if (Number.isNaN(asInt)) {
-      if (line === "#end") {
-        groups.push(group)
-        group = []
-      } else {
-        group.push(line)
-      }
-    } else {
-      const asFloat = parseFloat(line)
-      if (asFloat === asInt) {
-        group.push(asInt)
-      } else {
-        group.push(asFloat)
-      }
-    }
-  }
-  if (group.length) {
-    groups.push(group)
-  }
-
-  return groups
+  return readGroups(txt)
 }
 
-const readAnswer = (modulePath) => {
+const readAnswer = (modulePath, { groupAnswers } = {}) => {
   const parsedModulePath = path.parse(modulePath)
   let txt = fs
     .readFileSync(path.join(answersDir, parsedModulePath.name))
     .toString()
-  if (txt.endsWith("\n")) {
-    txt = txt.slice(0, -1)
+  if (groupAnswers) {
+    return readGroups(txt)
+  } else {
+    return trimTrailingNewline(txt).split("\n")
   }
-  return txt.split("\n")
 }
 
-const run = (modulePath, solver, inputs, answers) => {
+const run = (
+  modulePath,
+  solver,
+  inputs,
+  answers,
+  { groupAnswers, flattenAnswerGroup } = {},
+) => {
   inputs ??= readInput(modulePath)
-  answers ??= readAnswer(modulePath)
+  answers ??= readAnswer(modulePath, { groupAnswers })
 
   for (let i = 0; i < inputs.length; i++) {
     const input = inputs[i]
@@ -118,7 +132,9 @@ const run = (modulePath, solver, inputs, answers) => {
     let msg = ""
     try {
       const ans = String(solver(inputs[i]))
-      const expectation = answers[i]
+      const expectation = flattenAnswerGroup
+        ? answers[i].join("\n")
+        : answers[i]
       if (answers[i] === undefined) {
         prefix = "[ERR]"
         msg = `\n    Missing answer!`
@@ -128,11 +144,19 @@ const run = (modulePath, solver, inputs, answers) => {
       }
     } catch (error) {
       prefix = "[ERR]"
-      msg = `\n${error.toString()}`
+      msg = `\n${error.message}\n${error.stack}`
     }
 
     print(`${prefix} ${input} ${msg}`)
   }
+}
+
+const copyMatrix2D = (matrix) => {
+  const out = []
+  for (const row of matrix) {
+    out.push([...row])
+  }
+  return out
 }
 
 module.exports = {
@@ -143,4 +167,5 @@ module.exports = {
   readInput,
   readAnswer,
   run,
+  copyMatrix2D,
 }
