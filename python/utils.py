@@ -1,25 +1,27 @@
 from pathlib import Path
 
 import sys
+import re
+
+number_matcher = re.compile(r"^[0-9.]+$")
 
 inputs_dir = Path(__file__).parent.parent.joinpath("inputs")
 answers_dir = Path(__file__).parent.parent.joinpath("answers")
 
 
-def read_groups(input_source, *, interpret_lines=True):
+def read_groups(input_source, *, group_lines=True):
     groups = []
 
     with open(input_source, "r") as lines:
         group = []
         for line in lines:
             line = line.rstrip("\n")
-            if interpret_lines:
+            if group_lines:
                 if line == "#end":
                     groups += [group]
                     group = []
                 else:
-                    ascii = ord(line[0])
-                    if ascii > 47 and ascii < 58:  # 0 to 9
+                    if number_matcher.match(line):
                         if "." in line:
                             group += [float(line)]
                         else:
@@ -35,19 +37,19 @@ def read_groups(input_source, *, interpret_lines=True):
     return groups
 
 
-def read_prepared_input(file_path, **kwargs):
-    path = Path(file_path)
+def read_prepared_input(module_path):
+    path = Path(module_path)
     input_source = inputs_dir.joinpath(path.name[: -len(path.suffix)])
-    return read_groups(input_source, **kwargs)
+    return read_groups(input_source)
 
 
-def read_prepared_answer(file_path):
-    path = Path(file_path)
+def read_prepared_answer(module_path, *, group_answers=False):
+    path = Path(module_path)
     input_source = answers_dir.joinpath(path.name[: -len(path.suffix)])
-    return read_groups(input_source, interpret_lines=False)
+    return read_groups(input_source, group_lines=group_answers)
 
 
-def run(file, solver, inputs=None, answers=None):
+def run(module_path, solver, inputs=None, answers=None, *, group_answers=False):
     if not inputs:
         if len(sys.argv) > 1:
             inputs = read_groups(sys.argv[2])
@@ -55,9 +57,9 @@ def run(file, solver, inputs=None, answers=None):
             try:
                 inputs = read_groups("/dev/stdin")
             except:
-                inputs = read_prepared_input(file)
+                inputs = read_prepared_input(module_path)
 
-    answers = answers or read_prepared_answer(file)
+    answers = answers or read_prepared_answer(module_path, group_answers=group_answers)
 
     for i in range(0, len(inputs)):
         input = inputs[i]
