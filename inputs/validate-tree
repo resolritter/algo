@@ -1,0 +1,11 @@
+(A,B) (C,D)
+#end
+(A,B) (B,A)
+#end
+(A,B) (A,C) (A,D)
+#end
+(A,B) (A,C)
+#end
+(A,C) (C,D) (D,A)
+#end
+(A,C) (C,D) (A,D)
