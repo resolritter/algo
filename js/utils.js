@@ -118,12 +118,16 @@ const run = (
   solver,
   inputs,
   answers,
-  { groupAnswers, flattenAnswerGroup } = {},
+  { groupAnswers, flattenAnswerGroup, only, ...options } = {},
 ) => {
-  inputs ??= readInput(modulePath)
-  answers ??= readAnswer(modulePath, { groupAnswers })
+  inputs ??= options.inputs ?? readInput(modulePath)
+  answers ??= options.answers ?? readAnswer(modulePath, { groupAnswers })
+  only ??= []
 
   for (let i = 0; i < inputs.length; i++) {
+    if (only.length !== 0 && !only.includes(i)) {
+      continue
+    }
     const input = inputs[i]
 
     let prefix = "[OK]"
