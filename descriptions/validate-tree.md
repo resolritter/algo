@@ -1,4 +1,4 @@
-Given an sequence of `(Parent,Child)` relationships, given as a single input line, for example:
+Given an sequence of `(Parent,Child)` relationships, in a single input line, for example:
 
 `(A,B) (A,C)`
 
@@ -10,7 +10,7 @@ A tree should be produced from the `(Parent,Child)` relationships:
  B     C
 ```
 
-The program validates the tree such that
+The tree should be validated such that
 
 - If circular dependencies are produced, the program prints "Circular dependency" and exits
 - If a child has more than one parent, the program prints "Multiple parents" and exits
