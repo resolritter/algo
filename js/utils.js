@@ -136,7 +136,7 @@ const run = (
       const ans = String(solver(inputs[i]))
       const expectation = flattenAnswerGroup
         ? answers[i].join("\n")
-        : answers[i]
+        : String(answers[i])
       if (answers[i] === undefined) {
         prefix = "[ERR]"
         msg = `\n    Missing answer!`
