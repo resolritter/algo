@@ -54,10 +54,7 @@ const flattenDeep = (arr, results = []) => {
 }
 
 const trimTrailingNewline = (input) => {
-  while (input.slice(-1) === "\n") {
-    input = input.slice(0, -1)
-  }
-  return input
+  return input.slice(-1) === "\n" ? input.slice(0, -1) : input
 }
 
 const numberMatcher = /^[0-9]+$/
@@ -137,6 +134,18 @@ const run = (
     answers === undefined || Array.isArray(answers),
     "answers should be an array or undefined",
   )
+
+  for (const opt of Object.keys(options)) {
+    switch (opt) {
+      case "answers":
+      case "inputs": {
+        break
+      }
+      default: {
+        throw new Error(`Invalid option name: ${opt}`)
+      }
+    }
+  }
 
   let only = undefined
   if (paired) {
