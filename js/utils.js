@@ -61,11 +61,17 @@ const trimTrailingNewline = (input) => {
 }
 
 const numberMatcher = /^[0-9]+$/
-const readGroups = (txt) => {
+const readGroups = (txt, { shouldGroup } = {}) => {
+  const lines = trimTrailingNewline(txt).split("\n")
+
+  if (!shouldGroup) {
+    return lines
+  }
+
   const groups = []
 
   let group = []
-  for (const line of trimTrailingNewline(txt).split("\n")) {
+  for (const line of lines) {
     if (line === "#end") {
       groups.push(group)
       group = []
@@ -82,7 +88,7 @@ const readGroups = (txt) => {
   return groups
 }
 
-const readInput = (modulePath) => {
+const readInput = (modulePath, options) => {
   const inputPath = process.argv[2] ?? "/dev/stdin"
 
   let txt = ""
@@ -98,19 +104,15 @@ const readInput = (modulePath) => {
     throw new Error("Input text is empty")
   }
 
-  return readGroups(txt)
+  return readGroups(txt, options)
 }
 
-const readAnswer = (modulePath, { groupAnswers } = {}) => {
+const readAnswer = (modulePath, options) => {
   const parsedModulePath = path.parse(modulePath)
-  let txt = fs
+  const txt = fs
     .readFileSync(path.join(answersDir, parsedModulePath.name))
     .toString()
-  if (groupAnswers) {
-    return readGroups(txt)
-  } else {
-    return trimTrailingNewline(txt).split("\n")
-  }
+  return readGroups(txt, options)
 }
 
 const run = (
@@ -118,38 +120,65 @@ const run = (
   solver,
   inputs,
   answers,
-  { groupAnswers, flattenAnswerGroup, only, ...options } = {},
+  { groupInputs, groupAnswers, flattenAnswerGroup, paired, ...options } = {},
 ) => {
-  inputs ??= options.inputs ?? readInput(modulePath)
-  answers ??= options.answers ?? readAnswer(modulePath, { groupAnswers })
-  only ??= []
+  assert(
+    inputs === undefined || Array.isArray(inputs),
+    "inputs should be an array",
+  )
+  assert(
+    answers === undefined || Array.isArray(answers),
+    "answers should be an array or undefined",
+  )
+
+  let only = undefined
+  if (paired) {
+    assert(answers === undefined, "answers can't be given with paired: true")
+    const newInputs = []
+    answers = []
+    for (let i = 0; i < inputs.length; i++) {
+      const [input, answer, shouldRun] = inputs[i]
+      newInputs.push(input)
+      answers.push(answer)
+      if (shouldRun === true) {
+        only = [...(only ?? []), i]
+      }
+    }
+    inputs = newInputs
+  } else {
+    inputs ??=
+      options.inputs ?? readInput(modulePath, { shouldGroup: groupInputs })
+    answers ??=
+      options.answers ?? readAnswer(modulePath, { shouldGroup: groupAnswers })
+  }
 
   for (let i = 0; i < inputs.length; i++) {
-    if (only.length !== 0 && !only.includes(i)) {
+    if (only !== undefined && !only.includes(i)) {
       continue
     }
-    const input = inputs[i]
 
     let prefix = "[OK]"
     let msg = ""
     try {
-      const ans = String(solver(inputs[i]))
-      const expectation = flattenAnswerGroup
-        ? answers[i].join("\n")
-        : String(answers[i])
       if (answers[i] === undefined) {
         prefix = "[ERR]"
         msg = `\n    Missing answer!`
-      } else if (ans !== expectation) {
-        prefix = "[ERR]"
-        msg = `\n    ${ans} != ${expectation}`
+      } else {
+        const ans = String(solver(inputs[i]))
+        const expectation = flattenAnswerGroup
+          ? answers[i].join("\n")
+          : String(answers[i])
+        if (ans !== expectation) {
+          prefix = "[ERR]"
+          msg = `\n    ${ans} != ${expectation}`
+        }
       }
     } catch (error) {
       prefix = "[ERR]"
       msg = `\n${error.message}\n${error.stack}`
     }
 
-    print(`${prefix} ${input} ${msg}`)
+    print(`${i} => ${prefix} ${inputs[i]} ${msg}`)
   }
 }
 
