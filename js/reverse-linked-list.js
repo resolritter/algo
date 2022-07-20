@@ -14,11 +14,11 @@ const solve = (cur) => {
   let i = 0
   let prev = undefined
   while (true) {
-    let tmp = cur.next
+    let next = cur.next
     cur.next = prev
     prev = cur
-    if (tmp) {
-      cur = tmp
+    if (next) {
+      cur = next
     } else {
       break
     }
