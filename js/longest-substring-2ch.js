@@ -5,22 +5,21 @@ const solve = (str) => {
     return str
   }
 
-  let pprev = [str[0], 0]
-  let prev = [str[1], 1]
+  let ppre = [str[0], 0]
+  let pre = [str[1], 1]
   let ans = ""
-  let start = 0
   for (let i = 2; i < str.length; i++) {
-    if (str[i] === prev[0] || str[i] === pprev[0]) {
-      if (i + 1 - pprev[1] > ans.length) {
-        ans = str.slice(pprev[1], i + 1)
+    if (str[i] === pre[0] || str[i] === ppre[0]) {
+      if (i + 1 - ppre[1] > ans.length) {
+        ans = str.slice(ppre[1], i + 1)
       }
     }
-    if (str[i] !== prev[0]) {
-      if (str[i] === pprev[0]) {
-        prev = [str[i], i]
+    if (str[i] !== pre[0]) {
+      if (str[i] === ppre[0]) {
+        pre = [str[i], i]
       } else {
-        pprev = prev
-        prev = [str[i], i]
+        ppre = pre
+        pre = [str[i], i]
       }
     }
   }
