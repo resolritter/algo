@@ -10,7 +10,6 @@ run(
   // prettier-ignore
   [
     [1, 1],
-    [1, 1],
   ],
   // prettier-ignore
   undefined,

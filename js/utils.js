@@ -5,14 +5,8 @@ const assert = require("assert")
 const inputsDir = path.join(path.dirname(__dirname), "inputs")
 const answersDir = path.join(path.dirname(__dirname), "answers")
 
-const print = (item, msg) => {
-  if (msg) {
-    console.log(`\nPrinting ${msg}`)
-  }
-  console.log(item)
-  if (msg) {
-    console.log(`\nEnd ${msg}`)
-  }
+const print = (...args) => {
+  console.log(...args)
 }
 
 const assertArrayIsSorted = (array) => {
