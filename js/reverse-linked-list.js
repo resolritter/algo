@@ -11,7 +11,6 @@ const mkNode = (val, next) => {
 }
 
 const solve = (cur) => {
-  let i = 0
   let prev = undefined
   while (true) {
     let next = cur.next
