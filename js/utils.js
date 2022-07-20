@@ -112,6 +112,14 @@ const readAnswer = (modulePath, options) => {
   return readGroups(txt, options)
 }
 
+const map = (value, fn) => {
+  if (Array.isArray(value)) {
+    return value.map(fn)
+  } else {
+    return fn(value)
+  }
+}
+
 const run = (
   modulePath,
   solver,
@@ -123,6 +131,7 @@ const run = (
     validateAnswer,
     flattenAnswerGroup,
     paired,
+    serialize,
     ...options
   } = {},
 ) => {
@@ -145,6 +154,10 @@ const run = (
         throw new Error(`Invalid option name: ${opt}`)
       }
     }
+  }
+
+  serialize ??= (val) => {
+    return val
   }
 
   let only = undefined
@@ -184,10 +197,10 @@ const run = (
         if (validateAnswer) {
           validateAnswer(rawAnswer)
         }
-        const answer = String(rawAnswer)
+        const answer = String(map(rawAnswer, serialize))
         const expectation = flattenAnswerGroup
-          ? answers[i].join("\n")
-          : String(answers[i])
+          ? map(answers[i], serialize).join("\n")
+          : String(map(answers[i], serialize))
         if (answer !== expectation) {
           prefix = "[ERR]"
           msg = `\n    ${answer} != ${expectation}`
@@ -198,7 +211,7 @@ const run = (
       msg = `\n${error.message}\n${error.stack}`
     }
 
-    print(`${i} => ${prefix} ${inputs[i]} ${msg}`)
+    print(`${i} => ${prefix} ${map(inputs[i], serialize)} ${msg}`)
   }
 }
 
