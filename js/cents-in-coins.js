@@ -1,7 +1,5 @@
-const { readInput } = require("./utils")
+const { run } = require("./utils")
 const assert = require("assert")
-
-const inputs = readInput(__filename)
 
 const coinsValues = [100, 25, 5, 1]
 const solve = (money) => {
@@ -19,7 +17,4 @@ const solve = (money) => {
   return ans
 }
 
-for (const input of inputs[0]) {
-  const coins = solve(input)
-  assert.deepStrictEqual(coins, coinsValues)
-}
+run(__filename, solve, undefined, undefined, { groupAnswers: true })

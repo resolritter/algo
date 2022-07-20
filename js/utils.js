@@ -120,7 +120,14 @@ const run = (
   solver,
   inputs,
   answers,
-  { groupInputs, groupAnswers, flattenAnswerGroup, paired, ...options } = {},
+  {
+    groupInputs,
+    groupAnswers,
+    validateAnswer,
+    flattenAnswerGroup,
+    paired,
+    ...options
+  } = {},
 ) => {
   assert(
     inputs === undefined || Array.isArray(inputs),
@@ -164,13 +171,17 @@ const run = (
         prefix = "[ERR]"
         msg = `\n    Missing answer!`
       } else {
-        const ans = String(solver(inputs[i]))
+        const rawAnswer = solver(inputs[i])
+        if (validateAnswer) {
+          validateAnswer(rawAnswer)
+        }
+        const answer = String(rawAnswer)
         const expectation = flattenAnswerGroup
           ? answers[i].join("\n")
           : String(answers[i])
-        if (ans !== expectation) {
+        if (answer !== expectation) {
           prefix = "[ERR]"
-          msg = `\n    ${ans} != ${expectation}`
+          msg = `\n    ${answer} != ${expectation}`
         }
       }
     } catch (error) {
