@@ -9,34 +9,34 @@ def solve(vs):
         h[v] = True
 
     buf = ""
-    start = -1
-    end = -1
+    start = None
+    end = None
 
     def collect():
         nonlocal start, end, buf
-        if start == -1:
+        if start == None:
             return
-        if end == -1:
-            buf += f",{start}"
-        else:
+        if end:
             buf += f",{start}-{end}"
-        start = -1
-        end = -1
+        else:
+            buf += f",{start}"
+        start = None
+        end = None
 
     for i in range(0, 100):
         if i in h:
             collect()
             continue
-        if start == -1:
+        if start == None:
             start = i
         else:
             end = i
+    if buf == "" and start == None and end == None and len(vs) == 0:
+        start = 0
+        end = 99
     collect()
 
     return buf[1:]
 
 
-utils.run(
-    __file__,
-    solve,
-)
+utils.run(__file__, solve)
